@@ -1,11 +1,10 @@
 const path = require('path');
 const fs = require('fs');
-const Transform = require('stream').Transform;
 const { EOL } = require('os');
 const zip = require('node-stream-zip');
+const DepthToGray = require('./depth-to-gray');
 
 const datasetPath = 'c:/users/david/documents/ETS2DataCapture/data/';
-const DEPTH_DENORM = Math.pow(2, 24) - 1;
 
 function transformEntry(entry) {
   const data_start = 1;

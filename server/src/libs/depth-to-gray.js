@@ -1,5 +1,4 @@
-const zip = require('node-stream-zip');
-
+const Transform = require('stream').Transform;
 const DEPTH_DENORM = Math.pow(2, 24) - 1;
 
 class DepthToGray extends Transform {
@@ -7,76 +6,125 @@ class DepthToGray extends Transform {
 
   constructor(options) {
     super(options);
-    this.readSize = 0;
-    this.writeSize = 0;
-    this.tempBufferFilled = false;
-    this.tempBuffer = Buffer.alloc(0);
-    this.rest = Buffer.alloc(0);
+    this.headerBuffer = Buffer.alloc(0);
+    this.tmpBuffer = Buffer.alloc(0);
+    this.readBytes = 0;
+    this.processedBytes = 0;
+    this.generatedBytes = 0;
+
+    this.header = {
+      magic: '',
+      size: 0,
+      width: 0,
+      height: 0,
+      min_val: 0,
+      max_val: 0,
+      offset: 0
+    }
+  }
+
+  generateBMPHeader() {
+    let dataOffset = 54;
+    let dataSize = (this.header.size - this.header.offset);
+
+    const header = Buffer.alloc(54);
+    header.write("BM", 0);                  //  0 + 2b
+    header.writeInt32LE(dataSize, 2);             //  2 + 4b
+    header.writeInt32LE(0, 6)               //  6 + 4b
+    header.writeInt32LE(dataOffset, 10);          // 10 + 4b
+    header.writeInt32LE(40, 14);            // 14 + 4b
+    header.writeInt32LE(this.header.width, 18);   // 18 + 4b
+    header.writeInt32LE(-this.header.height, 22);  // 22 + 4b
+    header.writeInt16LE(1, 26);             // 26 + 2b
+    header.writeInt16LE(24, 28);            // 28 + 2b
+    header.writeInt32LE(0, 30);             // 30 + 4b
+    header.writeInt32LE(dataSize, 34);            // 34 + 4b
+    header.writeInt32LE(0x03c3, 38);        // 38 + 4b
+    header.writeInt32LE(0x03c3, 42);        // 42 + 4b
+    header.writeInt32LE(0, 46);             // 46 + 4b
+    header.writeInt32LE(0, 50);             // 54 + 4b
+    return header;
   }
 
   depthToColor(depthValueHex) {
-    const norm = parseInt(depthValueHex, 16);
+    const norm = depthValueHex.readUIntLE(0, 3);
     const val = norm / DEPTH_DENORM;
-    const gray = Math.floor(val * 255.0);
-    return gray.toString(16).padStart(2, '0');
+    const nval = (val - this.header.min_val) / this.range;
+    const gray = Math.trunc( nval * 255);
+    const strColor = gray.toString(16).padStart(2, '0');
+    return strColor + strColor + strColor;
   }
 
-  _transform(chunk, encoding, callback) {
-    this.readSize += chunk.length;
+  processHeader() {
+    this.header.magic = this.headerBuffer.slice(0, 2).toString();
+    this.header.size = this.headerBuffer.readInt32LE(2);
+    this.header.width = this.headerBuffer.readInt32LE(6);
+    this.header.height = this.headerBuffer.readInt32LE(10);
+    this.header.min_val = this.headerBuffer.readFloatLE(14);
+    this.header.max_val = this.headerBuffer.readFloatLE(18);
+    this.header.offset = this.headerBuffer.readInt32LE(22);
+    this.range = (this.header.max_val - this.header.min_val);
+  }
 
-    if(this.readSize <= DepthToGray.header_size) {
-      console.log(`Skipping header size: ${this.readSize}`);
-      this.tempBuffer = Buffer.concat([this.tempBuffer, chunk]);
+  _transform(chunk, encoding, next) {
+    this.readBytes += chunk.length;
+    this.tmpBuffer = Buffer.concat([ this.tmpBuffer, chunk ]);
+
+    // Accumulate chunks until all header is read
+    if(this.tmpBuffer.length < DepthToGray.header_size) {
+      next();
       return;
     }
 
-    if(!this.tempBufferFilled) {
-      let remaining = DepthToGray.header_size - this.tempBuffer.length;
-      this.tempBuffer = chunk.slice(0, remaining);
-      chunk = chunk.slice(DepthToGray.header_size);
-      this.tempBufferFilled = true;
+    // Read header
+    if(this.headerBuffer.length===0) {
+      this.headerBuffer = Buffer.from(this.tmpBuffer.slice(0, DepthToGray.header_size));
+      this.processHeader();
+      const header = this.generateBMPHeader();
+      this.push(header);
+      console.log(`Header read:\n${JSON.stringify(this.header, null, 4)}`);
+      this.tmpBuffer = Buffer.from(this.tmpBuffer.slice(this.header.offset));
     }
 
-    if(this.rest.length > 0) {
-      chunk = Buffer.concat([ this.rest, chunk ]);
+    // Process data
+    let reminder = this.tmpBuffer.length % 3;
+    let pLength = this.tmpBuffer.length - reminder;
+    let str = "";
+
+    for(let i=0; i < pLength; i += 3) {
+      let depth = this.tmpBuffer.slice(i, i + 3);
+      this.processedBytes += 3;
+      let depthColor = this.depthToColor(depth);
+      str += depthColor;
     }
 
-    console.log(`Read ${chunk.length}(${this.readSize})`);
+    let outBuffer = Buffer.from(str, 'hex');
+    this.generatedBytes += outBuffer.length;
 
-    let length = chunk.length;
-    let reminder = chunk.length % 3;
-
-    this.rest = Buffer.from(chunk.slice(length - reminder, length));
-    chunk = chunk.slice(0, length - reminder);
-
-    let outStr = "";
-    for(let i = 0; i < length; i += 3) {
-      let data = chunk.slice(i, i + 3).toString('hex');
-      let color = this.depthToColor(data);
-      outStr += color;
-    }
-    let buffer = Buffer.from(outStr, 'hex');
-    this.push(buffer);
-
-    this.writeSize += buffer.length;
-    console.log(`Write ${outStr.length} -> ${buffer.length} -> ${buffer.toString('hex').length} (${this.writeSize})`)
-    callback();
+    this.push(outBuffer);
+    this.tmpBuffer = this.tmpBuffer.slice(pLength);
+    next();
   }
 
   _flush(done) {
-    if(this.rest && this.rest.length > 0) {
-      let outStr = "";
-
-      for(let i = 0; i < this.rest.length; i += 3) {
-        let data = this.rest.slice(i, i + 3).toString('hex');
-        let color = this.depthToColor(data);
-        outStr += color;
-      }
-
-      let buffer = Buffer.from(outStr, 'hex');
-      this.push(buffer);
+    if(this.header.size !== this.readBytes) {
+      console.log(`read size not correct: ${this.header.size} !== ${this.readBytes}`);
     }
 
+    if(this.tmpBuffer.length > 0) {
+      console.log(`missing bytes: ${this.tmpBuffer.length}`);
+    }
 
+    console.log(`
+depth transform stats:
+    total bytes read: ${this.readBytes}
+    header size: ${DepthToGray.header_size}
+    total bytes processed: ${this.processedBytes}
+    total bytes generated: ${this.generatedBytes}
+    `);
+
+    done();
   }
 }
+
+module.exports=DepthToGray;

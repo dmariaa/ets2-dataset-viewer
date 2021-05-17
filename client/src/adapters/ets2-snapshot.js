@@ -39,11 +39,12 @@ const Ets2SessionReader = (function () {
   }
 
   function getFile(id, file) {
+    let uri = uris.getFile(id, file);
     return axiosInstance.request({
       method: 'GET',
-      url: uris.getFile(id, file),
+      url: uri,
       responseType: "arraybuffer",
-      cancelToken: _createCancelToken(getFile.name)
+      cancelToken: _createCancelToken(uri)
     });
   }
 

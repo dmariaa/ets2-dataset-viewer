@@ -12,7 +12,8 @@ class DatasetViewer extends Component {
   state = {
     image: null,
     depth: null,
-    loading: false
+    loadingImage: false,
+    loadingDepth: false
   }
 
   componentDidMount() {
@@ -22,21 +23,21 @@ class DatasetViewer extends Component {
   componentDidUpdate(prevProps, prevState, snapshot) {
     if(!prevProps.snapshot || this.props.snapshot.id !== prevProps.snapshot.id) {
       this._loadImage(this.props.snapshot);
-      this._loadDepth(this.props.depth);
+      this._loadDepth(this.props.snapshot);
     }
   }
 
   _loadImage(snapshot) {
     if(!snapshot || snapshot===null) return;
 
-    this.setState({ loading: true });
+    this.setState({ loadingImage: true });
 
     snapshot.getImage()
       .then((res) => {
         const buffer = new Buffer(res.data);
         this.setState({
           image: buffer.toString('base64'),
-          loading: false
+          loadingImage: false
         });
       });
   }
@@ -44,14 +45,14 @@ class DatasetViewer extends Component {
   _loadDepth(snapshot) {
     if(!snapshot || snapshot===null) return;
 
-    this.setState( {loading: true });
+    this.setState( {loadingDepth: true });
 
     snapshot.getDepth()
       .then((res) => {
         const buffer = new Buffer(res.data);
         this.setState({
           depth: buffer.toString('base64'),
-          loading: false
+          loadingDepth: false
         })
       });
   }
@@ -70,15 +71,21 @@ class DatasetViewer extends Component {
           <Panel className={"image"}>
             <PanelTitle>BMP Image</PanelTitle>
             <PanelImageItem>
-                <div className={"panel-backdrop " + (this.state.loading ? "loading" : "")}>
+                <div className={"panel-backdrop " + (this.state.loadingImage ? "loading" : "")}>
                   <div className={"loading-image"}>LOADING IMAGE</div>
                 </div>
                 <img src={`data:image/bmp;base64,${this.state.image}`} />
             </PanelImageItem>
           </Panel>
           <div className={"separator"} />
-          <Panel className={"depth"}>
+          <Panel className={"image depth"}>
             <PanelTitle>Depth</PanelTitle>
+            <PanelImageItem>
+              <div className={"panel-backdrop " + (this.state.loadingDepth ? "loading" : "")}>
+                <div className={"loading-image"}>LOADING DEPTH</div>
+              </div>
+              <img src={`data:image/bmp;base64,${this.state.depth}`} />
+            </PanelImageItem>
           </Panel>
         </div>
       </Fragment>
