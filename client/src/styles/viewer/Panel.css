@@ -1,0 +1,64 @@
+.dataset-viewer-panel {
+    background-color: #f0f0f0;
+    border: 1px solid #c0c0c0;
+    padding: 8px 16px;
+    display: flex;
+    flex-direction: column;
+}
+
+.dataset-viewer-panel .title {
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.panel-items {
+}
+
+.panel-item {
+    display: block;
+    text-align: left;
+}
+
+.panel-image-item {
+    display: block;
+    position: relative;
+    min-height: 100%;
+}
+
+.dataset-viewer-panel.image .panel-items {
+    flex: 2;
+}
+
+.panel-image-item .panel-backdrop {
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    top: 0px;
+    bottom: 0px;
+    height: 100%;
+    color: #fff;
+    background-color: rgba(0,0,0,0.6);
+    display: none;
+}
+
+.panel-image-item .panel-backdrop.loading {
+    display: block;
+}
+
+.panel-image-item .panel-backdrop .loading-image {
+    margin: auto;
+    height: 10px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+
+.panel-label {
+
+}
+
+.panel-value {
+
+}

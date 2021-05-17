@@ -1,0 +1,37 @@
+.dataset-viewer {
+    flex: 1;
+    padding: 8px 16px;
+    display: flex;
+    flex-direction: column;
+}
+
+.dataset-viewer > .no-data {
+    white-space: nowrap;
+    font-size: 30px;
+    align-self: center;
+    margin: auto;
+}
+
+.panel-image-item > img {
+    width: 100%;
+}
+
+.telemetry {
+    margin: 0 auto;
+}
+
+.separator {
+    height: 16px;
+    width: 16px;
+}
+
+.images {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+}
+
+.image, .depth {
+    width: 49%;
+}
+

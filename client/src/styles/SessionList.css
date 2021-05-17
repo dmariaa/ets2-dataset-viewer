@@ -1,0 +1,56 @@
+.session-list {
+/* nothing yet */
+}
+
+.session-list-icon {
+    font-size: 19px;
+    vertical-align: bottom;
+    cursor: pointer;
+}
+
+.session-list-icon:hover {
+    background-color: #c0c0c0;
+    color: #5a5a5a;
+}
+
+.session-list-list {
+    position: absolute;
+    margin-top: 4px;
+    background-color: #fff;
+    padding: 4px 4px;
+    display: none;
+    border: 1px solid #f0f0f0;
+}
+
+.session-list-list ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.session-list-list.visible {
+    display: block;
+}
+
+.session-list-list-title {
+    display: block;
+    background-color: #f0f0f0;
+    padding: 4px 16px;
+    font-weight: 600;
+}
+
+.session-list-list-item {
+    padding: 6px 8px;
+    display: block;
+    cursor: pointer;
+    text-align: center;
+}
+
+.session-list-list-item:hover {
+    background-color: #c0c0c0;
+    color: #5a5a5a;
+}
+
+.session-list-list-item.no-items {
+    pointer-events: none;
+    cursor: default;
+}

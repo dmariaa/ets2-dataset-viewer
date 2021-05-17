@@ -1,0 +1,18 @@
+.react-notice {
+    /*
+    margin-right: 0;
+    margin-left: auto;
+    */
+}
+
+.react-logo {
+    height: 20px;
+    pointer-events: none;
+    vertical-align: bottom;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .react-logo {
+        animation: App-logo-spin infinite 10s linear;
+    }
+}

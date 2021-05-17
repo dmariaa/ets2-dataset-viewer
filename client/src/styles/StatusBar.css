@@ -1,0 +1,11 @@
+.status-bar {
+    background-color: #f0f0f0;
+    padding: 8px 16px;
+    display: flex;
+    flex-direction: row;
+}
+
+.right-align {
+    margin-left: auto;
+    margin-right: 0;
+}
