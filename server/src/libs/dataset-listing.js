@@ -4,7 +4,7 @@ const { EOL } = require('os');
 const zip = require('node-stream-zip');
 const DepthToGray = require('./depth-to-gray');
 
-const datasetPath = 'c:/users/david/documents/ETS2DataCapture/data/';
+const datasetPath = process.env.DATA_DIR;
 
 function transformEntry(entry) {
   const data_start = 1;

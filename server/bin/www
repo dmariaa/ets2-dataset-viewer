@@ -4,9 +4,20 @@
  * Module dependencies.
  */
 
-var app = require('../app');
+var app = require('../src/app');
 var debug = require('debug')('server:server');
+
 var http = require('http');
+var http_options = {};
+
+if(process.env.NODE_ENV==='production' || process.env.PROTOCOL==='https') {
+  var http = require('https');
+  var http_options = {
+    cert: fs.readFileSync(process.env.CERT),
+    key: fs.readFileSync(process.env.KEY),
+    requestCert: false
+  };
+}
 
 /**
  * Get port from environment and store in Express.
