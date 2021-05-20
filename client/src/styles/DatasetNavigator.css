@@ -1,10 +1,8 @@
 .dataset-navigator {
-    margin: 0px 20%;
     padding: 8px;
     background-color: #f0f0f0;
     display: flex;
-    flex-direction: row;
-    align-items: center;
+    flex-direction: column;
 }
 
 .entry {
@@ -14,10 +12,6 @@
     vertical-align: middle;
 }
 
-.buttons {
-    margin-left: auto;
-    margin-right: 0;
-}
 
 .button {
     line-height: 32px;
@@ -51,4 +45,17 @@
     color: #c0c0c0;
     pointer-events: none;
     cursor: default;
+}
+
+@media (min-width: 1024px) {
+    .dataset-navigator {
+        margin: 0px 20%;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .buttons {
+        margin-left: auto;
+        margin-right: 0;
+    }
 }

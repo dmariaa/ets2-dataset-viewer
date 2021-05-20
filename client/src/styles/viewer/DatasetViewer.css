@@ -1,6 +1,6 @@
 .dataset-viewer {
     flex: 1;
-    padding: 8px 16px;
+    margin-top: 4px;
     display: flex;
     flex-direction: column;
 }
@@ -16,22 +16,37 @@
     width: 100%;
 }
 
-.telemetry {
-    margin: 0 auto;
+.separator {
+    height: 4px;
+    width: 4px;
+    flex-shrink: 0;
 }
 
-.separator {
-    height: 16px;
-    width: 16px;
+.image {
+    flex: 1;
 }
 
 .images {
-    flex: 1;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
 }
 
-.image, .depth {
-    width: 49%;
-}
+@media (min-width: 1024px) {
+    .dataset-viewer {
+        padding: 8px 0px;
+        margin: 0;
+    }
 
+    .telemetry {
+        margin: 0 auto;
+    }
+
+    .separator {
+        height: 8px;
+        width: 8px;
+    }
+
+    .images {
+        flex-direction: row;
+    }
+}
