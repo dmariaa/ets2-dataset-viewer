@@ -1,4 +1,5 @@
 import axios from "axios";
+var sprintf = require('sprintf-js').sprintf;
 
 const Ets2SessionReader = (function () {
   const uris = {
@@ -63,23 +64,34 @@ class Ets2TelemetryVector {
     this.z = parseFloat(data.z);
   }
 
+  scalarProduct(value) {
+    return new Ets2TelemetryVector({x: this.x * value, y: this.y * value, z: this.z * value });
+  }
+
+  scalarDivision(value) {
+    return new Ets2TelemetryVector({x: this.x / value, y: this.y / value, z: this.z / value });
+  }
+
+  magnitude() {
+    return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
+  }
+
+  minus(other) {
+    return new Ets2TelemetryVector({ x: other.x - this.x, y: other.y - this.y, z: other.z - this.z});
+  }
+
   render() {
+    let r = sprintf("(%.2f, %.2f, %.2f)", this.x, this.y, this.z );
     return (
-      <span>({this.x},{this.y},{this.z})</span>
+      <span>{r}</span>
     );
   }
 }
 
 class Ets2TelemetryPosition extends Ets2TelemetryVector {
-  constructor(data) {
-    super(data);
-  }
 }
 
 class Ets2TelemetryOrientation extends Ets2TelemetryVector {
-  constructor(data) {
-    super(data);
-  }
 }
 
 class Ets2Snapshot {
@@ -95,6 +107,7 @@ class Ets2Snapshot {
       angular_velocity: new Ets2TelemetryVector(snapshot.telemetry.angular_velocity),
       linear_acceleration: new Ets2TelemetryVector(snapshot.telemetry.linear_acceleration),
       angular_acceleration: new Ets2TelemetryVector(snapshot.telemetry.angular_acceleration),
+      local_scale: parseFloat(snapshot.telemetry.local_scale)
     }
   }
 

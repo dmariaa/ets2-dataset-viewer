@@ -64,7 +64,6 @@ class SessionList extends Component {
 
   render() {
     const list_shown = this.state.list_shown;
-    const selected = this.props.session;
 
     let items = [ <span key={"no-items"} className={"session-list-list-item no-items"}>No sessions available</span> ];
 

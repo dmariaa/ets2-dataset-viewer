@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "nodemon ./bin/www",
-    "build": "gulp clean && gulp build",
+    "build": "gulp clean && yarn run --cwd=../client build && gulp build",
     "clean": "gulp clean"
   },
   "dependencies": {

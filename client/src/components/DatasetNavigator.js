@@ -2,7 +2,7 @@ import { Component } from "react";
 
 import "../styles/DatasetNavigator.css"
 import SessionList from "./SessionList";
-import {Ets2Session, Ets2SessionReader, Ets2Telemetry} from "../adapters/ets2-snapshot";
+import {Ets2SessionReader} from "../adapters/ets2-snapshot";
 
 
 class DatasetNavigator extends Component {
@@ -18,22 +18,31 @@ class DatasetNavigator extends Component {
     this.handleSessionChange = this.handleSessionChange.bind(this);
     this.navigateNext = this.navigateNext.bind(this);
     this.navigatePrev = this.navigatePrev.bind(this);
+    this.navigate = this.navigate.bind((this));
   }
 
-  navigatePrev() {
+  navigatePrev(amount) {
     const { current, session_data } = this.state;
-
-    if(current - 1 >= 0) {
-      this.setState({ current: current - 1 });
-      if(this.props.onSnapshotChange) this.props.onSnapshotChange(session_data.entries[current - 1], session_data.name);
-    }
+    const v = Math.max(0, current + amount);
+    console.log(v);
+    this.setState({ current: v });
+    if(this.props.onSnapshotChange) this.props.onSnapshotChange(session_data.entries[v], session_data.name);
   }
 
-  navigateNext() {
+  navigateNext(amount) {
     const { current, session_data } = this.state;
-    if(current + 1 < this.state.session_data.entries_count) {
-      this.setState({ current: current + 1 });
-      if(this.props.onSnapshotChange) this.props.onSnapshotChange(session_data.entries[current + 1], session_data.name);
+    const v = Math.min(this.state.session_data.entries_count - 1, current + amount);
+    console.log(v);
+    this.setState({ current: v });
+    if(this.props.onSnapshotChange) this.props.onSnapshotChange(session_data.entries[v], session_data.name);
+  }
+
+  navigate(e) {
+    const amount = parseInt(e.currentTarget.getAttribute('data-amount'));
+    if(amount >= 0) {
+      this.navigateNext(amount);
+    } else {
+      this.navigatePrev(amount);
     }
   }
 
@@ -62,9 +71,11 @@ class DatasetNavigator extends Component {
         {current >=0 &&
           <div className="buttons">
             <div className={"current-title"}>Current snapshot</div>
-            <span className={"material-icons button" + (current==0 ? " disabled" : "")} onClick={this.navigatePrev}>navigate_before</span>
+            <span className={"material-icons button double" + (current===0 ? " disabled" : "")} onClick={this.navigate} data-amount={"-10"}>&#xE408;&#xE408;</span>
+            <span className={"material-icons button" + (current===0 ? " disabled" : "")} onClick={this.navigate} data-amount={"-1"}>navigate_before</span>
             <span className={"current"}>{current + 1}</span>
-            <span className={"material-icons button" + (current + 1>=session_data.entries_count ? " disabled": "")} onClick={this.navigateNext}>navigate_next</span>
+            <span className={"material-icons button" + (current + 1>=session_data.entries_count ? " disabled": "")} onClick={this.navigate} data-amount={"1"}>navigate_next</span>
+            <span className={"material-icons button double + (current + 1>=session_data.entries_count ? \" disabled\": \"\")"} onClick={this.navigate} data-amount={"10"}>&#xE409;&#xE409;</span>
           </div>
         }
       </div>

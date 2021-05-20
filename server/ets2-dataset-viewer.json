@@ -1,10 +1,11 @@
 {
-  "compilerOptions": {
-    "module": "commonjs",
-    "target": "es5",
-    "sourceMap": true
-  },
-  "exclude": [
-    "node_modules"
-  ]
+  "name": "ets2-dataset-viewer",
+  "script": "bin/www",
+  "cwd": "/var/websites/tfg/server",
+  "env": {
+    "PORT": "8101",
+    "PROTOCOL": "https",
+    "CERT": "/etc/letsencrypt/live/dmariaa.es/cert.pem",
+    "KEY": "/etc/letsencrypt/live/dmariaa.es/privkey.pem"
+  }
 }

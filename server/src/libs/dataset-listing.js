@@ -22,7 +22,8 @@ function transformEntry(entry) {
       linear_velocity: toVector(entry, data_start + 6),
       angular_velocity: toVector(entry, data_start + 9),
       linear_accel: toVector(entry, data_start + 12),
-      angular_accel: toVector(entry, data_start + 15)
+      angular_accel: toVector(entry, data_start + 15),
+      local_scale: entry[data_start + 18]
     },
   }
   return data;

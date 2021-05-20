@@ -6,8 +6,6 @@ var logger = require('morgan');
 var helmet = require('helmet')
 var compression = require('compression');
 
-process.env.DATA_DIR = process.env.DATA_DIR || path.join(__dirname, '../data');
-
 var indexRouter = require('./routes');
 var apiRouter = require('./routes/api');
 

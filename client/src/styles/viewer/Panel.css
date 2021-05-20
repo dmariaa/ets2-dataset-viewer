@@ -17,6 +17,8 @@
 .panel-item {
     display: block;
     text-align: left;
+    margin-right: 8px;
+    margin-bottom: 2px;
 }
 
 .panel-image-item {
@@ -61,4 +63,9 @@
 
 .panel-value {
 
+}
+
+.panel-row {
+    display: flex;
+    flex-direction: row;
 }
