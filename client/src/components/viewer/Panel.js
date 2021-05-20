@@ -37,12 +37,6 @@ function PanelTitle(props) {
 }
 
 class PanelItem extends React.Component {
-  state = {
-    label : '',
-    value: '',
-    separator: ':'
-  }
-
   set value(val) {
     this.setState({ value: val });
   }
@@ -50,8 +44,17 @@ class PanelItem extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state.label = props.label;
-    this.state.value = props.value;
+    this.state = {
+      label : props.label,
+      value: props.value || '',
+      separator: ':'
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if(!prevProps.value || prevProps.value !== this.props.value) {
+      this.setState({ value: this.props.value });
+    }
   }
 
   render() {
