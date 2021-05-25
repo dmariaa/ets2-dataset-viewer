@@ -48,21 +48,25 @@ const dataset = {
 
     let sessions = await files.reduce(async (list, file_name) => {
       if (path.extname(file_name) === '.zip') {
-        // Read zip file data
-        const session = new zip.async({file: path.join(datasetPath, file_name)});
+        try {
+          // Read zip file data
+          const session = new zip.async({file: path.join(datasetPath, file_name)});
 
-        // Names
-        const name = path.basename(file_name, '.zip');
-        const tel_name = path.posix.join(name, 'telemetry.txt');
-        console.log(`Reading telemetry file ${tel_name}`);
+          // Names
+          const name = path.basename(file_name, '.zip');
+          const tel_name = path.posix.join(name, 'telemetry.txt');
+          console.log(`Reading telemetry file ${tel_name}`);
 
-        // Telemetry file contents
-        const telemetry_file = await session.entryData(tel_name);
-        const lines = telemetry_file.toString().split(EOL).filter(l => l.length > 0);
-        await session.close();
+          // Telemetry file contents
+          const telemetry_file = await session.entryData(tel_name);
+          const lines = telemetry_file.toString().split(EOL).filter(l => l.length > 0);
+          await session.close();
 
-        let e = {id: name, name: file_name, entries_count: lines.length};
-        (await list).push(e);
+          let e = {id: name, name: file_name, entries_count: lines.length};
+          (await list).push(e);
+        } catch(error) {
+          console.log(`Error reading file ${file_name}: ${error}`);
+        }
       }
 
       return list;
