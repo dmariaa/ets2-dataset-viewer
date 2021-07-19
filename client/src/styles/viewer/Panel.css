@@ -39,7 +39,7 @@
     bottom: 0px;
     height: 100%;
     color: #fff;
-    background-color: rgba(0,0,0,0.6);
+    background-color: rgba(0, 0, 0, 0.6);
     display: none;
 }
 
@@ -68,4 +68,9 @@
 .panel-row {
     display: flex;
     flex-direction: row;
+}
+
+.panel-column {
+    display: flex;
+    flex-direction: column;
 }

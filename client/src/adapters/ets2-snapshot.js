@@ -1,4 +1,5 @@
 import axios from "axios";
+
 var sprintf = require('sprintf-js').sprintf;
 
 const Ets2SessionReader = (function () {
@@ -7,48 +8,51 @@ const Ets2SessionReader = (function () {
     getUri: (...p) => `/api/sessions/${p[0]}`,
     getFile: (...p) => `/api/sessions/${p[0]}/${p[1]}`
   };
-
+  
   const axiosInstance = axios.create({
     baseurl: '/',
     withCredentials: false
   });
-
+  
   const cancelTokens = {};
-
+  
   function _createCancelToken(apiCall) {
     cancelTokens[apiCall] &&
-      cancelTokens[apiCall].cancel(`Previous ${apiCall} cancelled`);
-
+    cancelTokens[apiCall].cancel(`Previous ${apiCall} cancelled`);
+    
     cancelTokens[apiCall] = axios.CancelToken.source();
     return cancelTokens[apiCall].token;
   }
-
+  
   function list() {
+    const cancelToken = _createCancelToken('list');
     return axiosInstance.request({
       method: 'GET',
       url: uris.listUri,
-      cancelToken: _createCancelToken(list.name)
+      cancelToken: cancelToken
     });
   }
-
+  
   function get(id) {
+    const cancelToken = _createCancelToken('get/' + id);
     return axiosInstance.request({
       method: 'GET',
       url: uris.getUri(id),
-      cancelToken: _createCancelToken(get.name)
+      cancelToken: cancelToken
     });
   }
-
+  
   function getFile(id, file) {
     let uri = uris.getFile(id, file);
+    const cancelToken = _createCancelToken(uri);
     return axiosInstance.request({
       method: 'GET',
       url: uri,
       responseType: "arraybuffer",
-      cancelToken: _createCancelToken(uri)
+      cancelToken: cancelToken
     });
   }
-
+  
   return {
     list: list,
     get: get,
@@ -63,25 +67,25 @@ class Ets2TelemetryVector {
     this.y = parseFloat(data.y);
     this.z = parseFloat(data.z);
   }
-
+  
   scalarProduct(value) {
-    return new Ets2TelemetryVector({x: this.x * value, y: this.y * value, z: this.z * value });
+    return new Ets2TelemetryVector({x: this.x * value, y: this.y * value, z: this.z * value});
   }
-
+  
   scalarDivision(value) {
-    return new Ets2TelemetryVector({x: this.x / value, y: this.y / value, z: this.z / value });
+    return new Ets2TelemetryVector({x: this.x / value, y: this.y / value, z: this.z / value});
   }
-
+  
   magnitude() {
     return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
   }
-
+  
   minus(other) {
-    return new Ets2TelemetryVector({ x: other.x - this.x, y: other.y - this.y, z: other.z - this.z});
+    return new Ets2TelemetryVector({x: other.x - this.x, y: other.y - this.y, z: other.z - this.z});
   }
-
+  
   render() {
-    let r = sprintf("(%.2f, %.2f, %.2f)", this.x, this.y, this.z );
+    let r = sprintf("(%.2f, %.2f, %.2f)", this.x, this.y, this.z);
     return (
       <span>{r}</span>
     );
@@ -95,9 +99,10 @@ class Ets2TelemetryOrientation extends Ets2TelemetryVector {
 }
 
 class Ets2Snapshot {
-  constructor(snapshot = {telemetry: {}}, name = '') {
+  constructor(snapshot = {telemetry: {}}, session = {name: '', data: {}}) {
     this.id = snapshot.id;
-    this.name = name;
+    this.name = session.name;
+    this.session_data = session.session_data;
     this.image = snapshot.image;
     this.depth = snapshot.depth;
     this.telemetry = {
@@ -110,11 +115,11 @@ class Ets2Snapshot {
       local_scale: parseFloat(snapshot.telemetry.local_scale)
     }
   }
-
+  
   getImage() {
     return Ets2SessionReader.getFile(this.name, this.image);
   }
-
+  
   getDepth() {
     return Ets2SessionReader.getFile(this.name, this.depth);
   }

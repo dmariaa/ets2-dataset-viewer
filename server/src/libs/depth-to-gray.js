@@ -80,9 +80,16 @@ class DepthToGray extends Transform {
     if(this.headerBuffer.length===0) {
       this.headerBuffer = Buffer.from(this.tmpBuffer.slice(0, DepthToGray.header_size));
       this.processHeader();
+  
+      console.log(`Header read:\n${JSON.stringify(this.header, null, 4)}`);
+      
+      let outBuffer = Buffer.alloc(8);
+      outBuffer.writeFloatLE(this.header.min_val, 0);
+      outBuffer.writeFloatLE(this.header.max_val, 4);
+      this.push(outBuffer)
+  
       const header = this.generateBMPHeader();
       this.push(header);
-      console.log(`Header read:\n${JSON.stringify(this.header, null, 4)}`);
       this.tmpBuffer = Buffer.from(this.tmpBuffer.slice(this.header.offset));
     }
 
@@ -116,13 +123,13 @@ class DepthToGray extends Transform {
     }
 
     console.log(`
-depth transform stats:
+    depth transform stats:
     total bytes read: ${this.readBytes}
     header size: ${DepthToGray.header_size}
     total bytes processed: ${this.processedBytes}
     total bytes generated: ${this.generatedBytes}
     `);
-
+    
     done();
   }
 }

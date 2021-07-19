@@ -1,48 +1,48 @@
 .app {
-  overflow: hidden;
+    overflow: hidden;
 }
 
 .app {
-  display: flex;
-  flex-direction: column;
-  text-align: center;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
 }
 
 .app-block {
-  height: 100%;
-  padding: 4px;
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
+    height: 100%;
+    padding: 4px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
 }
 
 
 .App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+    background-color: #282c34;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(10px + 2vmin);
+    color: white;
 }
 
 .App-link {
-  color: #61dafb;
+    color: #61dafb;
 }
 
 @keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 @media (min-width: 1024px) {
-  .app-block {
-    padding: 8px;
-  }
+    .app-block {
+        padding: 8px;
+    }
 }

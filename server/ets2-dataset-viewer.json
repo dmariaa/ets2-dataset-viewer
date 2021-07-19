@@ -6,6 +6,13 @@
     "PORT": "8101",
     "PROTOCOL": "https",
     "CERT": "/etc/letsencrypt/live/dmariaa.es/cert.pem",
-    "KEY": "/etc/letsencrypt/live/dmariaa.es/privkey.pem"
+    "KEY": "/etc/letsencrypt/live/dmariaa.es/privkey.pem",
+    "NODE_ENV": "production"
+  },
+  "watch": ["bin", "public", "src"],
+  "watch_delay": 1000,
+  "ignore_watch" : ["node_modules", "client/img"],
+  "watch_options": {
+    "followSymlinks": false
   }
 }

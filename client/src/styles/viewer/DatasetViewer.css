@@ -31,14 +31,21 @@
     flex-direction: column;
 }
 
+.camera-parameters {
+    margin-top: 8px;
+    font-weight: bold;
+}
+
 @media (min-width: 1024px) {
     .dataset-viewer {
         padding: 8px 0px;
         margin: 0;
     }
 
-    .telemetry {
+    .telemetry-session-data {
         margin: 0 auto;
+        display: flex;
+        flex-direction: row;
     }
 
     .separator {

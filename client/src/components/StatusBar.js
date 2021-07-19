@@ -1,4 +1,4 @@
-import { Component } from "react";
+import {Component} from "react";
 
 import "../styles/StatusBar.css";
 
@@ -8,7 +8,7 @@ class StatusBar extends Component {
   render() {
     return (
       <div className="status-bar">
-        <ReactNotice className="right-align" />
+        <ReactNotice className="right-align"/>
       </div>
     );
   }

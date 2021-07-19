@@ -1,5 +1,5 @@
 class ConfigReader {
-    constructor() {
-        this.configFile = '';
-    }
+  constructor() {
+    this.configFile = '';
+  }
 }

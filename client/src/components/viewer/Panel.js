@@ -1,34 +1,36 @@
-import React, { useState, Fragment } from "react";
+import React, {forwardRef, Fragment} from "react";
 
 import "../../styles/viewer/Panel.css"
 
-function Panel(props) {
+
+const Panel = React.forwardRef((props, ref)  => {
   let title = undefined;
   let items = [];
-
+  
   React.Children.forEach(props.children, (child) => {
     if (child.type === PanelTitle) {
       title = child;
-    } else if(child.type === PanelItem
+    } else if (child.type === PanelItem
       || child.type === PanelImageItem
-      || child.type === PanelRow) {
+      || child.type === PanelRow
+      || child.type === PanelColumn) {
       items.push(child);
     }
   });
-
+  
   return (
-    <div className={"dataset-viewer-panel " + (props.className || '' )}>
+    <div ref={ref} className={"dataset-viewer-panel " + (props.className || '')}>
       {title}
       <div className={"panel-items"}>
-      {items && items.length > 0 &&
-        items.map(function(item) {
+        {items && items.length > 0 &&
+        items.map(function (item) {
           return item;
         })
-      }
+        }
       </div>
     </div>
   );
-}
+});
 
 function PanelTitle(props) {
   return (
@@ -38,31 +40,31 @@ function PanelTitle(props) {
 
 class PanelItem extends React.Component {
   set value(val) {
-    this.setState({ value: val });
+    this.setState({value: val});
   }
-
+  
   constructor(props) {
     super(props);
-
+    
     this.state = {
-      label : props.label,
+      label: props.label,
       value: props.value || '',
-      separator: ':'
-    }
+      separator: (props.separator === undefined) ? ': ' : props.separator
+    };
   }
-
+  
   componentDidUpdate(prevProps, prevState, snapshot) {
-    if(!prevProps.value || prevProps.value !== this.props.value) {
-      this.setState({ value: this.props.value });
+    if (!prevProps.value || prevProps.value !== this.props.value) {
+      this.setState({value: this.props.value});
     }
   }
-
+  
   render() {
     return (
       <Fragment>
         <div className={"panel-item"}>
-        <span className={"panel-label"}>{this.state.label}{this.state.separator || ": "}</span>
-        <span className={"panel-value"}>{this.state.value}</span>
+          <span className={"panel-label"}>{this.state.label + this.state.separator}</span>
+          <span className={"panel-value"}>{this.state.value}</span>
         </div>
       </Fragment>
     )
@@ -79,7 +81,15 @@ function PanelImageItem(props) {
 
 function PanelRow(props) {
   return (
-    <div className={"panel-row"}>
+    <div className={"panel-row " + (props.className || '')}>
+      {props.children}
+    </div>
+  );
+}
+
+function PanelColumn(props) {
+  return (
+    <div className={"panel-column " + (props.className || '')}>
       {props.children}
     </div>
   );
@@ -87,6 +97,7 @@ function PanelRow(props) {
 
 export {
   PanelItem,
+  PanelColumn,
   PanelRow,
   PanelImageItem,
   PanelTitle,

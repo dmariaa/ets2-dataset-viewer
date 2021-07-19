@@ -16,10 +16,11 @@ app.use(compression());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, '../public')));
-app.use('/data', express.static(process.env.DATA_DIR));
 
-app.use('/', indexRouter);
+app.use(express.static(process.env.STATIC_DIR));
+
+app.use('/data', express.static(process.env.DATA_DIR));
 app.use('/api', apiRouter);
+app.use('/', indexRouter);
 
 module.exports = app;

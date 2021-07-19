@@ -1,0 +1,26 @@
+.about-root {
+    margin: auto auto;
+    max-width: 900px;
+}
+
+.about-root h1 {
+    margin-bottom: 10px;
+}
+.about-root h2 {
+    margin: 0px auto 20px;
+    font-weight: normal;
+    font-size: 16px;
+}
+
+.about-root p {
+    text-align: justify;
+}
+
+.about-root p.centered {
+    text-align: center;
+}
+
+.about-root a {
+    color: #0c0c0c;
+    font-weight: bold;
+}
