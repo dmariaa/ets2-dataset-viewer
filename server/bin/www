@@ -9,6 +9,9 @@ var path = require('path');
 var debug = require('debug')('server:server');
 
 process.env.DATA_DIR = process.env.DATA_DIR || path.join(process.cwd(), '../data');
+process.env.STATIC_DIR = process.env.STATIC_DIR ||
+  (process.env.NODE_ENV==='production' ?
+    path.join(process.cwd(), '/public') : path.join(process.cwd(), '../client/build'));
 
 /** Require app */
 var app = require('../src/app');

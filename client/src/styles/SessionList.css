@@ -1,5 +1,5 @@
 .session-list {
-/* nothing yet */
+    /* nothing yet */
 }
 
 .session-list-icon {
@@ -20,6 +20,7 @@
     padding: 4px 4px;
     display: none;
     border: 1px solid #f0f0f0;
+    z-index: 1;
 }
 
 .session-list-list ul {
