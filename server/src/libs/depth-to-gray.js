@@ -55,6 +55,12 @@ class DepthToGray extends Transform {
     return strColor + strColor + strColor;
   }
 
+  rawDepth(depthValueHex) {
+    const norm = depthValueHex.readUIntLE(0, 3);
+    const val = norm / DEPTH_DENORM;
+    return val
+  }
+
   processHeader() {
     this.header.magic = this.headerBuffer.slice(0, 2).toString();
     this.header.size = this.headerBuffer.readInt32LE(2);
@@ -83,10 +89,10 @@ class DepthToGray extends Transform {
   
       console.log(`Header read:\n${JSON.stringify(this.header, null, 4)}`);
       
-      let outBuffer = Buffer.alloc(8);
-      outBuffer.writeFloatLE(this.header.min_val, 0);
-      outBuffer.writeFloatLE(this.header.max_val, 4);
-      this.push(outBuffer)
+      // let outBuffer = Buffer.alloc(8);
+      // outBuffer.writeFloatLE(this.header.min_val, 0);
+      // outBuffer.writeFloatLE(this.header.max_val, 4);
+      // this.push(outBuffer)
   
       const header = this.generateBMPHeader();
       this.push(header);
@@ -101,7 +107,7 @@ class DepthToGray extends Transform {
     for(let i=0; i < pLength; i += 3) {
       let depth = this.tmpBuffer.slice(i, i + 3);
       this.processedBytes += 3;
-      let depthColor = this.depthToColor(depth);
+      let depthColor = this.rawDepth(depth);
       str += depthColor;
     }
 

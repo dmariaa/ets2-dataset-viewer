@@ -5,6 +5,7 @@ import {format, parse} from 'date-fns';
 import "../../styles/viewer/DatasetViewer.css";
 import {Panel, PanelImageItem, PanelItem, PanelRow, PanelTitle} from "./Panel";
 import {Ets2Snapshot, Ets2TelemetryVector} from "../../adapters/ets2-snapshot";
+import {DepthDataReader} from '../../adapters/depth-data';
 
 class DatasetViewer extends Component {
   static props = {
@@ -20,7 +21,9 @@ class DatasetViewer extends Component {
     loadingDepth: false,
     deltaPosition: new Ets2TelemetryVector()
   }
-  
+
+  depth_data = undefined
+
   constructor(props) {
     super(props);
     this.depthCoord = React.createRef();
@@ -28,6 +31,7 @@ class DatasetViewer extends Component {
     this.depthColor = React.createRef();
     this.imageColor = React.createRef();
     this.depthReal = React.createRef();
+    this.imageReal = React.createRef();
     this.imageOver = this.imageOver.bind(this);
   }
   
@@ -72,30 +76,44 @@ class DatasetViewer extends Component {
     
     snapshot.getDepth()
       .then((res) => {
-        const buffer = new Buffer(res.data);
-        const length = buffer.length;
-        const min_val = buffer.readFloatLE(0);
-        const max_val = buffer.readFloatLE(4);
-  
-        this.setState({
-          min_val: min_val,
-          max_val: max_val,
-          depth: buffer.slice(8),
-          loadingDepth: false
-        })
+        // const buffer = new Buffer(res.data);
+        // const length = buffer.length;
+        // const min_val = buffer.readFloatLE(0);
+        // const max_val = buffer.readFloatLE(4);
+        //
+        // this.setState({
+        //   min_val: min_val,
+        //   max_val: max_val,
+        //   depth: buffer.slice(8),
+        //   loadingDepth: false
+        // })
+
+        this.depth_data = new DepthDataReader(res.data);
+
+        this.depth_data.generateImage().then(image_data => {
+          const buffer = new Buffer(image_data);
+          this.setState({
+            depth: buffer,
+            loadingDepth: false
+          })
+        });
       });
   }
-  
-  toUnnormDepth(depthValue, min, max) {
-    return depthValue * (max - min) + min;
+
+  normalizeDepth(depthValue, min = 0.1, max = 3000) {
+    return (depthValue - min) / (max - min)
   }
-  
-  toRealDepth(depthValue, near = 0.1, far = 3000.0)
+
+  toRealDepth(depthValue, near = 0.1, far = 800.0)
   {
-      const denormValue = this.toUnnormDepth(depthValue,this.state.min_val, this.state.max_val);
-      const p33 = far / (far - near)
-      const p43 = (-far * near) / (far - near)
-      return p43 / (denormValue - p33)
+    const p33 = far / (far - near);
+    const p43 = (-far * near) / (far - near);
+    return p43 / (depthValue - p33);
+  }
+
+  clamp(value, min = 0, max = 1)
+  {
+    return Math.min(Math.max(value, min), max);
   }
   
   imageOver(e) {
@@ -106,25 +124,25 @@ class DatasetViewer extends Component {
     const imagePos = image.getBoundingClientRect();
     const hRatio = image.naturalWidth / image.width;
     const vRatio = image.naturalHeight / image.height;
-    const px = Math.floor((e.clientX - Math.trunc(imagePos.x)) * hRatio);
-    const py = Math.floor((e.clientY - Math.trunc(imagePos.y)) * vRatio);
-    const bcoord = ((py * 1440) + px) * 3;
+    const px = this.clamp(Math.floor((e.clientX - Math.trunc(imagePos.x)) * hRatio), 0, 1439);
+    const py = this.clamp(Math.floor((e.clientY - Math.trunc(imagePos.y)) * vRatio), 0, 815);
+    const coords = ((py * 1440 + px));
+
+    // Read color from BMP buffer
+    const bcoord = coords * 3;
     const buffer = isDepth ? this.state.depth.slice(54) : this.state.image.slice(54);
     const color = buffer.slice(bcoord, bcoord + 3).toString("hex");
-    
+
+    // Get reference
     const ref = isDepth ? this.depthCoord.current : this.imageCoord.current;
     const col = isDepth ? this.depthColor.current : this.imageColor.current;
-    const real = isDepth ? this.depthReal.current : null;
-    
-    const d = (parseInt(color.substring(0, 2), 16) / 255);
-    
+    const real = isDepth ? this.depthReal.current : this.imageReal.current;
+
     ref.value = sprintf("(%d, %d)", px, py);
-    col.value = isDepth ? this.toUnnormDepth(d, this.state.min_val, this.state.max_val) : "#" + color;
+    col.value = color;
     
-    if(real != null)
-    {
-      real.value = this.toRealDepth(d);
-    }
+    // const d = this.depth_data.getDepth(coords * 2);
+    real.value = sprintf("%.2f metros", -this.depth_data.getDepthFromCoordinates(px, py));
   }
   
   displayDate(d) {
@@ -192,6 +210,7 @@ class DatasetViewer extends Component {
               <PanelRow>
                 <PanelItem label={"Coords"} ref={this.imageCoord} value={"(0,0)"}/>
                 <PanelItem label={"Color"} ref={this.imageColor} value={"(0,0)"}/>
+                <PanelItem label={"Depth"} ref={this.imageReal} value={"0"} />
               </PanelRow>
             </PanelImageItem>
           </Panel>
@@ -211,7 +230,7 @@ class DatasetViewer extends Component {
               <PanelRow>
                 <PanelItem label={"Coords"} ref={this.depthCoord} value={"(0,0)"}/>
                 <PanelItem label={"Depth"} ref={this.depthColor} value={"(0,0)"}/>
-                <PanelItem label={"Depth"} ref={this.depthReal} value={"(0,0)"}/>
+                <PanelItem label={"Depth"} ref={this.depthReal} value={"0"}/>
               </PanelRow>
             </PanelImageItem>
           </Panel>
