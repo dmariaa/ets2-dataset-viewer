@@ -131,7 +131,8 @@ const dataset = {
     if(ext === '.bmp') {
       return pipe.on('finish', function() { console.log(`Closing ${file_name}`); session.close(); });
     } else if(ext ==='.raw') {
-      return pipe.pipe(new DepthToGray()).on('finish', function() { console.log(`Closing ${file_name}`); session.close(); });
+      // return pipe.pipe(new DepthToGray()).on('finish', function() { console.log(`Closing ${file_name}`); session.close(); });
+      return pipe.on('finish', function() { console.log(`Closing ${file_name}`); session.close(); });
     }
   },
 

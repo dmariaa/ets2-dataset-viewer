@@ -1481,6 +1481,14 @@
     mkdirp "^1.0.4"
     rimraf "^3.0.2"
 
+"@petamoriken/float16@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@petamoriken/float16/-/float16-2.0.0.tgz#d740c2fb921cdafb7175d6e1e845187f18401586"
+  integrity sha512-1aRXdJ8kiHF1jdnn7aVEGrcO0xF4eiKbt2zvUTQJXlnku3mXeDAGZEuGH3XN7QasBomAA1yFnabYSryFheRYsA==
+  dependencies:
+    lodash ">=4.17.5 <5.0.0"
+    lodash-es ">=4.17.5 <5.0.0"
+
 "@pmmmwh/react-refresh-webpack-plugin@0.4.3":
   version "0.4.3"
   resolved "https://registry.yarnpkg.com/@pmmmwh/react-refresh-webpack-plugin/-/react-refresh-webpack-plugin-0.4.3.tgz#1eec460596d200c0236bf195b078a5d1df89b766"
@@ -7002,6 +7010,11 @@ locate-path@^5.0.0:
   dependencies:
     p-locate "^4.1.0"
 
+"lodash-es@>=4.17.5 <5.0.0":
+  version "4.17.21"
+  resolved "https://registry.yarnpkg.com/lodash-es/-/lodash-es-4.17.21.tgz#43e626c46e6591b7750beb2b50117390c609e3ee"
+  integrity sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==
+
 lodash._reinterpolate@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/lodash._reinterpolate/-/lodash._reinterpolate-3.0.0.tgz#0ccf2d89166af03b3663c796538b75ac6e114d9d"
@@ -7047,7 +7060,7 @@ lodash.uniq@^4.5.0:
   resolved "https://registry.yarnpkg.com/lodash.uniq/-/lodash.uniq-4.5.0.tgz#d0225373aeb652adc1bc82e4945339a842754773"
   integrity sha1-0CJTc662Uq3BvILklFM5qEJ1R3M=
 
-"lodash@>=3.5 <5", lodash@^4.17.11, lodash@^4.17.14, lodash@^4.17.15, lodash@^4.17.19, lodash@^4.17.20, lodash@^4.17.21, lodash@^4.17.5, lodash@^4.7.0:
+"lodash@>=3.5 <5", "lodash@>=4.17.5 <5.0.0", lodash@^4.17.11, lodash@^4.17.14, lodash@^4.17.15, lodash@^4.17.19, lodash@^4.17.20, lodash@^4.17.21, lodash@^4.17.5, lodash@^4.7.0:
   version "4.17.21"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
@@ -9708,6 +9721,11 @@ saxes@^5.0.1:
   integrity sha512-5LBh1Tls8c9xgGjw3QrMwETmTMVk0oFgvrFSvWx62llR2hcEInrKNZ2GZCCuuy2lvWrdl5jhbpeqc5hRYKFOcw==
   dependencies:
     xmlchars "^2.2.0"
+
+scale-color-perceptual@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/scale-color-perceptual/-/scale-color-perceptual-1.1.2.tgz#370fb1aa1fc48261d3048f34edfe6155fb0a52d5"
+  integrity sha1-Nw+xqh/EgmHTBI807f5hVfsKUtU=
 
 scheduler@^0.20.2:
   version "0.20.2"
