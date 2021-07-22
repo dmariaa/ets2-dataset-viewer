@@ -40,8 +40,16 @@ class DatasetViewer extends Component {
     this._loadDepth(this.props.snapshot);
   }
   
+  shouldRefresh(prevProps)
+  {
+    if(!prevProps.snapshot) return true;
+    if(prevProps.snapshot.name !== this.props.snapshot.name) return true;
+    if(prevProps.snapshot.id !== this.props.snapshot.id) return true;
+    return false;
+  }
+  
   componentDidUpdate(prevProps, prevState, snapshot) {
-    if (!prevProps.snapshot || this.props.snapshot.id !== prevProps.snapshot.id) {
+    if (this.shouldRefresh(prevProps)) {
       this._loadImage(this.props.snapshot);
       this._loadDepth(this.props.snapshot);
       
@@ -142,7 +150,8 @@ class DatasetViewer extends Component {
     col.value = color;
     
     // const d = this.depth_data.getDepth(coords * 2);
-    real.value = sprintf("%.2f metros", -this.depth_data.getDepthFromCoordinates(px, py));
+    const dp = this.depth_data.getDepthFromCoordinates(px, py);
+    real.value = sprintf("%.2f metros", -dp);
   }
   
   displayDate(d) {
